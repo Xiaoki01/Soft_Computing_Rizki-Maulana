@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Soft Computing{% endblock %}
+
+{% block content %}
+<section class="content-section mt-5">
+    <div class="container">
+        <!-- Profile Section -->
+        <div class="card mb-5 shadow-lg border-0">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <!-- Profile Image -->
+                    <div class="col-md-4 text-center mb-3 mb-md-0">
+                        <img src="{{ url_for('static', filename='img/profile.jpg') }}" alt="Profile"
+                            class="rounded-3 shadow-lg img-fluid"
+                            style="max-width: 75%; height: auto; border-radius: 20px;">
+                    </div>
+
+                    <!-- Data Diri -->
+                    <div class="col-md-8">
+                        <h3 class="section-title mb-3">Profil Mahasiswa</h3>
+                        <table class="table table-borderless text-light">
+                            <tr>
+                                <td><strong>Nama</strong></td>
+                                <td>: Rizki Maulana Zulyadaini</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NIM</strong></td>
+                                <td>: 2311016210027</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Program Studi</strong></td>
+                                <td>: Ilmu Komputer</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Universitas</strong></td>
+                                <td>: Universitas Lambung Mangkurat</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Semester</strong></td>
+                                <td>: 5</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Email</strong></td>
+                                <td>: rizky.achmad0101@gmail.com</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tentang Website -->
+        <div class="card mb-5 shadow-lg border-0">
+            <div class="card-body">
+                <h3 class="section-title mb-3">Tentang Website</h3>
+                <p>Website ini dibuat sebagai media pembelajaran dan dokumentasi tugas-tugas mata kuliah Soft Computing.
+                </p>
+                <p>Di sini kita akan belajar materi meliputi konsep dasar, implementasi algoritma, dan studi kasus
+                    terkait Soft Computing.</p>
+                <p>Sebagai pembelajaran soft komputing ilmu komputer tahun 2025</p>
+            </div>
+        </div>
+
+        <!-- Daftar Tugas -->
+        <div class="mt-4">
+            <h3 class="section-title text-center mb-4">Daftar Tugas</h3>
+            <div class="row justify-content-center">
+                <div class="col-md-4 col-lg-3">
+                    <div class="card shadow border-0">
+                        <div class="card-header text-center fw-bold">
+                            Tugas 1
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Dasar Soft Computing</h5>
+                            <p class="card-text">
+                                Pembahasan konsep Soft Computing meliputi Logika Fuzzy, Neural Network, dan
+                                karakteristiknya.
+                            </p>
+                            <a href="/tugas1" class="btn btn-primary">Lihat Detail</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-3">
+                    <div class="card shadow border-0">
+                        <div class="card-header text-center fw-bold">
+                            Tugas 2
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Implementasi Fuzzy Sugeno</h5>
+                            <p class="card-text">Kalkulator Fuzzy Sugeno untuk monitoring suhu dan kelembaban server
+                                berbasis IoT.</p>
+                            <a href="/tugas2" class="btn btn-primary">Lihat Detail</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-3">
+                    <div class="card shadow border-0">
+                        <div class="card-header text-center fw-bold">
+                            Tugas 3
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Genetic Algorithm</h5>
+                            <p class="card-text">Implementasi Algoritma Genetika untuk menyelesaikan Knapsack Problem.
+                            </p>
+                            <a href="/tugas3" class="btn btn-primary">Lihat Detail</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-lg-3">
+                    <div class="card shadow border-0">
+                        <div class="card-header text-center fw-bold">
+                            Tugas 4
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title">TSP dengan GA</h5>
+                            <p class="card-text">Implementasi Algoritma Genetika untuk menyelesaikan Traveling Salesman
+                                Problem.</p>
+                            <a href="/tugas4" class="btn btn-primary">Lihat Detail</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

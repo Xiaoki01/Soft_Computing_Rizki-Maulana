@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block title %}Tugas 1 - Soft Computing{% endblock %}
+
+{% block content %}
+<div style="margin-top: 80px;"></div>
+
+<section class="content-section">
+    <div class="container">
+        <div class="tugas-content">
+            <h2 class="text-center mb-4 fw-bold section-title">Tugas 1: Pengenalan Soft Computing</h2>
+
+            <!-- Pengertian Soft Computing -->
+            <div class="card mb-5 shadow border-0">
+                <div class="card-header text-center fw-bold">
+                    1. Pengertian Soft Computing
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Soft Computing</strong> adalah pendekatan komputasi yang digunakan untuk menyelesaikan
+                        masalah kompleks yang sulit dimodelkan secara matematis.
+                        Soft Computing lebih fleksibel, toleran terhadap ketidakpastian, dan mampu mendekati solusi
+                        optimal meskipun data tidak lengkap.
+                    </p>
+
+                    <h5 class="content-title" style="font-size: 1.1rem;">Karakteristik Soft Computing:</h5>
+                    <ul>
+                        <li>Toleran terhadap ketidakpastian dan ketidakakuratan</li>
+                        <li>Fleksibel dan adaptif terhadap perubahan data</li>
+                        <li>Mampu memberikan solusi mendekati optimal</li>
+                        <li>Menggabungkan berbagai teknik kecerdasan buatan</li>
+                    </ul>
+
+                    <h5 class="content-title" style="font-size: 1.1rem;">Komponen Utama:</h5>
+                    <ul>
+                        <li>Fuzzy Logic (Logika Fuzzy)</li>
+                        <li>Neural Network (Jaringan Saraf Tiruan)</li>
+                        <li>Genetic Algorithm (Algoritma Genetika)</li>
+                        <li>Machine Learning</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Logika Fuzzy -->
+            <div class="card mb-5 shadow border-0">
+                <div class="card-header text-center fw-bold">
+                    2. Logika Fuzzy (Fuzzy Logic)
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Logika Fuzzy</strong> memperluas konsep logika biner (benar/salah) menjadi spektrum
+                        nilai kebenaran antara 0 dan 1.
+                        Hal ini meniru cara manusia berpikir dengan ketidakpastian, seperti "agak panas", "cukup cepat",
+                        dan sebagainya.
+                        Pendekatan ini digunakan ketika model matematis sulit atau tidak memungkinkan dibuat,
+                        namun keputusan tetap harus dihasilkan secara realistis seperti pemikiran manusia.
+                    </p>
+
+                    <h5 class="content-title" style="font-size: 1.1rem;">Konsep Dasar:</h5>
+                    <ul>
+                        <li><strong>Himpunan Fuzzy:</strong> Elemen memiliki derajat keanggotaan (0–1)</li>
+                        <li><strong>Fungsi Keanggotaan:</strong> Menentukan sejauh mana nilai masuk dalam suatu kategori
+                        </li>
+                        <li><strong>Aturan Fuzzy:</strong> IF–THEN logika linguistik untuk pengambilan keputusan</li>
+                        <li><strong>Defuzzifikasi:</strong> Konversi hasil fuzzy menjadi nilai tegas (crisp)</li>
+                    </ul>
+
+                    <h5 class="content-title" style="font-size: 1.1rem;">Sejarah Singkat</h5>
+                    <p>
+                        Konsep himpunan fuzzy diperkenalkan oleh Lotfi A. Zadeh pada tahun 1965 (University of
+                        California, Berkeley).
+                        Penerapan awal untuk kontrol linguistik dikembangkan oleh Ebrahim H. Mamdani dan S. Assilian
+                        pada 1975
+                        (uji coba pengendalian boiler/steam engine menggunakan aturan linguistik fuzzy). Tokoh lain yang
+                        berkontribusi pada variasi metode fuzzy termasuk Tsukamoto dan para peneliti bidang
+                        informasi/pencarian
+                        yang mengadaptasi konsep fuzzy untuk tolerant matching.
+                    </p>
+
+                    <h5 class="content-title" style="font-size: 1.1rem;">Perkembangan</h5>
+                    <p>
+                        Logika fuzzy saat ini digunakan secara luas pada sistem kontrol cerdas, seperti AC otomatis
+                        , transmisi otomatis mobil, kamera autofokus, hingga sistem pendukung
+                        keputusan medis. Teknologi ini terus berkembang dan digabungkan dengan neural networks
+                        menjadi “Neuro-Fuzzy” untuk meningkatkan akurasi adaptasi.
+                    </p>
+
+                    <!-- Metode Mamdani -->
+                    <h5 class="content-title" style="font-size: 1.1rem;">Metode: Mamdani</h5>
+                    <p>
+                        Mamdani menggunakan aturan IF–THEN berbasis himpunan fuzzy untuk input
+                        dan output.
+                        Inferensi menghasilkan himpunan fuzzy, kemudian dilakukan proses <em>defuzzification</em>
+                        (umumnya menggunakan metode centroid)
+                        untuk menghasilkan nilai crisp. Metode ini lebih intuitif karena menyerupai cara berpikir
+                        manusia.
+                    </p>
+                    <p>
+                        <strong>Alur Operasi:</strong> Fuzzification → Evaluasi Aturan (min/max atau t-norm/t-conorm) →
+                        Agregasi → Defuzzification (centroid).
+                    </p>
+                    <p>
+                        Cocok untuk sistem berbasis kontrol yang butuh interpretasi
+                        bahasa natural,
+                        misalnya sistem pendingin ruangan, kecepatan kipas, atau kontrol lalu lintas. Digunakan saat
+                        ketepatan numerik tidak terlalu ketat, tetapi transparansi aturan tinggi. Representatif dan mudah dipahami pakar, cocok untuk aplikasi yang
+                        butuh interpretabilitas tinggi.
+                    </p>
+
+
+                    <!-- Metode Sugeno -->
+                    <h5 class="content-title" style="font-size: 1.1rem;">Metode: Sugeno</h5>
+                    <p>
+                        Sugeno menggunakan aturan IF–THEN, tetapi bagian konsekuen (output)
+                        berupa fungsi linear
+                        atau konstanta, bukan himpunan fuzzy. Hasil inferensi langsung berupa nilai numerik sehingga
+                        tidak memerlukan
+                        proses defuzzifikasi berat seperti Mamdani.
+                    </p>
+                    <p>
+                        <strong>Alur Operasi:</strong> Fuzzification → Evaluasi Aturan → Pembobotan Output Linear →
+                        Pembagian Tertimbang (Weighted Average).
+                    </p>
+                    <p>
+                        Cocok pada sistem yang membutuhkan perhitungan cepat dan
+                        presisi numerik lebih tinggi,
+                        misalnya prediksi, optimasi, sistem adaptif, dan model kontrol otomatis modern.
+                        Perhitungan lebih ringan dan mudah dipadukan dengan algoritma
+                        optimasi (mis. ANN, ANFIS), cocok untuk data real-time.
+                    </p>
+
+                    <!-- Metode Tsukamoto -->
+                    <h5 class="content-title" style="font-size: 1.1rem;">Metode: Tsukamoto</h5>
+                    <p>
+                        Pada metode Tsukamoto, setiap aturan IF–THEN menghasilkan output crisp
+                        secara langsung
+                        melalui fungsi keanggotaan monoton. Output akhir diperoleh dari rata-rata tertimbang berdasarkan
+                        derajat keanggotaan aturan.
+                    </p>
+                    <p>
+                        <strong>Alur Operasi:</strong> Fuzzification → Evaluasi Aturan → Perhitungan Output Crisp Tiap
+                        Aturan → Rata-Rata Tertimbang.
+                    </p>
+                    <p>
+                        Cocok untuk proses yang membutuhkan hubungan input-output yang
+                        jelas dan terkontrol secara numerik,
+                        serta saat urutan nilai harus terjaga (fungsi monoton), seperti sistem penilaian risiko atau
+                        kredit.
+                        Output setiap aturan langsung berupa nilai tegas sehingga lebih
+                        stabil untuk keputusan yang sensitif terhadap perubahan kecil pada input.
+                    </p>
+
+
+                    <h5 class="content-title" style="font-size: 1.1rem;">Contoh Rumus Fungsi Keanggotaan Segitiga:</h5>
+                    <pre><code>
+μ(x) = 0,                
+jika x ≤ a atau x ≥ c
+(x - a)/(b - a), jika a < x ≤ b
+(c - x)/(c - b), jika b < x < c
+                    </code></pre>
+                    <p>
+                        Di mana <code>μ(x)</code> menunjukkan derajat keanggotaan nilai <code>x</code> terhadap himpunan
+                        fuzzy dengan titik <code>a</code>, <code>b</code>, dan <code>c</code>.
+                    </p>
+
+                    <h5 class="content-title" style="font-size: 1.1rem;">Contoh Aplikasi:</h5>
+                    <ul>
+                        <li><em>IF suhu = "hangat" THEN kipas = "sedang"</em></li>
+                        <li><em>IF suhu = "panas" THEN kipas = "cepat"</em></li>
+                    </ul>
+                    <p>
+                        Logika fuzzy memungkinkan sistem menentukan kecepatan kipas berdasarkan suhu aktual (misalnya
+                        28°C memiliki "hangat" = 0.6 dan "panas" = 0.4).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Neural Network -->
+            <div class="card mb-5 shadow border-0">
+                <div class="card-header text-center fw-bold">
+                    3. Neural Network (Jaringan Saraf Tiruan)
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Neural Network</strong> atau jaringan saraf tiruan adalah sistem komputasi yang meniru
+                        cara kerja otak manusia.Terdiri dari neuron-neuron buatan yang saling terhubung dan mampu
+                        belajar dari data. Penting karena kemampuan generalisasi dari data berisik, ekstraksi fitur
+                        otomatis, dan fleksibilitas untuk berbagai tugas seperti klasifikasi, regresi, pemrosesan citra,
+                        dan pemahaman bahasa alami.
+                    </p>
+
+                    <h5 class="content-title" style="font-size: 1.1rem;">Komponen:</h5>
+                    <ul>
+                        <li><strong>Input Layer:</strong> menerima data</li>
+                        <li><strong>Hidden Layer:</strong> memproses informasi</li>
+                        <li><strong>Output Layer:</strong> menghasilkan output</li>
+                        <li><strong>Weights:</strong> mengatur kekuatan koneksi antar neuron</li>
+                        <li><strong>Activation Function:</strong> menentukan respons neuron</li>
+                    </ul>
+
+                    <h5 class="content-title" style="font-size: 1.1rem;">Sejarah Singkat</h5>
+                    <p>
+                    <ul>
+                        <li><strong>1943:</strong> Warren McCulloch & Walter Pitts — model neuron biner formal pertama.
+                        </li>
+                        <li><strong>1958:</strong> Frank Rosenblatt — Perceptron, model pembelajaran linear awal untuk
+                            pengenalan pola.</li>
+                        <li><strong>1986:</strong> David E. Rumelhart, Geoffrey Hinton & Ronald J. Williams —
+                            popularisasi algoritma backpropagation
+                            untuk melatih jaringan multi-layer (MLP), yang membuka jalan untuk jaringan yang lebih
+                            dalam.</li>
+                        <li><strong>1990-an — 2010-an:</strong> Kontribusi signifikan dari Yann LeCun (CNN), Sepp
+                            Hochreiter & Jürgen Schmidhuber (LSTM),
+                            serta riset yang mengarah pada deep learning modern oleh Hinton, LeCun, dan Bengio.</li>
+                    </ul>
+                    </p>
+
+                    <h5 class="content-title" style="font-size: 1.1rem;">Rumus Dasar Aktivasi Neuron:</h5>
+                    <pre><code>
+z = Σ(wᵢ * xᵢ) + b
+f(z) = 1 / (1 + e^(-z))      ← Fungsi aktivasi sigmoid
+                    </code></pre>
+
+                    <h5 class="content-title" style="font-size: 1.1rem;">Proses Belajar (Backpropagation):</h5>
+                    <pre><code>
+Δw = -η * (∂E/∂w)
+                    </code></pre>
+                    <p>
+                        Di mana:
+                    <ul>
+                        <li><code>Δw</code> = perubahan bobot</li>
+                        <li><code>η</code> = learning rate</li>
+                        <li><code>E</code> = error total</li>
+                    </ul>
+                    Proses ini dilakukan berulang hingga error minimum tercapai.
+                    </p>
+
+                    <h5 class="content-title" style="font-size: 1.1rem;">Contoh Aplikasi:</h5>
+                    <ul>
+                        <li>Pengenalan gambar (CNN)</li>
+                        <li>Penerjemahan bahasa (RNN, LSTM)</li>
+                        <li>Prediksi cuaca dan harga saham</li>
+                        <li>Diagnosa medis otomatis</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="/" class="btn btn-secondary">Kembali ke Home</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

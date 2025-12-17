@@ -1,0 +1,477 @@
+{% extends "base.html" %}
+
+{% block title %}Tugas 4 - TSP dengan GA{% endblock %}
+
+{% block content %}
+<section class="content-section mt-5">
+    <div class="container">
+        <h2 class="section-title text-center mb-4">Tugas 4: Traveling Salesman Problem dengan Genetic Algorithm</h2>
+
+        <!-- Penjelasan Materi -->
+        <div class="card mb-4 shadow border-0">
+            <div class="card-body tugas-content">
+                <h3>Pengertian TSP (Traveling Salesman Problem)</h3>
+                <p>
+                    Traveling Salesman Problem (TSP) adalah masalah optimasi klasik dalam ilmu komputer dan matematika.
+                    Tujuannya adalah menemukan rute terpendek yang mengunjungi setiap kota tepat satu kali dan kembali
+                    ke kota asal.
+                </p>
+
+                <h3>Genetic Algorithm untuk TSP</h3>
+                <p>
+                    Genetic Algorithm (GA) adalah metode pencarian heuristik yang terinspirasi dari proses seleksi alam
+                    dan evolusi.
+                    GA sangat efektif untuk menyelesaikan TSP karena:
+                </p>
+                <ul>
+                    <li><strong>Representasi Kromosom:</strong> Urutan kota yang dikunjungi (permutasi)</li>
+                    <li><strong>Fitness Function:</strong> Total jarak perjalanan (semakin kecil semakin baik)</li>
+                    <li><strong>Selection:</strong> Tournament Selection untuk memilih parent terbaik</li>
+                    <li><strong>Crossover:</strong> Ordered Crossover (OX) untuk menjaga validitas rute</li>
+                    <li><strong>Mutation:</strong> Swap Mutation untuk mengacak dua kota dalam rute</li>
+                    <li><strong>Elitism:</strong> Mempertahankan solusi terbaik di setiap generasi</li>
+                </ul>
+
+                <h3>Tahapan Algoritma</h3>
+                <ol>
+                    <li>Inisialisasi populasi dengan rute acak</li>
+                    <li>Evaluasi fitness setiap individu (total jarak rute)</li>
+                    <li>Seleksi parent menggunakan tournament selection</li>
+                    <li>Crossover menggunakan Ordered Crossover</li>
+                    <li>Mutasi dengan swap dua kota</li>
+                    <li>Elitism: simpan individu terbaik</li>
+                    <li>Ulangi hingga mencapai jumlah generasi</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Input Matriks Jarak -->
+        <div class="card mb-4 shadow border-0">
+            <div class="card-header bg-primary text-white fw-bold">
+                Input Matriks Jarak Antar Kota
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Jumlah Kota:</label>
+                    <input type="number" id="numCities" class="form-control" value="5" min="3" max="10">
+                    <button class="btn btn-secondary mt-2" onclick="generateMatrix()">Generate Matriks</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center" id="distanceMatrixTable">
+                    </table>
+                </div>
+
+                <button class="btn btn-info" onclick="loadDefaultMatrix()">Load Data Default (seperti contoh
+                    soal)</button>
+            </div>
+        </div>
+
+        <!-- Parameter GA -->
+        <div class="card mb-4 shadow border-0">
+            <div class="card-header bg-success text-white fw-bold">
+                Parameter Genetic Algorithm
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Ukuran Populasi:</label>
+                        <input type="number" id="popSize" class="form-control" value="100" min="10">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Jumlah Generasi:</label>
+                        <input type="number" id="generations" class="form-control" value="500" min="10">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Tournament Size (K):</label>
+                        <input type="number" id="tournamentK" class="form-control" value="5" min="2">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Crossover Rate:</label>
+                        <input type="number" id="crossoverRate" class="form-control" value="0.9" step="0.1" min="0"
+                            max="1">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Mutation Rate:</label>
+                        <input type="number" id="mutationRate" class="form-control" value="0.2" step="0.1" min="0"
+                            max="1">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Elite Size:</label>
+                        <input type="number" id="eliteSize" class="form-control" value="1" min="0">
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-lg w-100" onclick="runTSP()">
+                    <span id="btnText">Jalankan TSP GA</span>
+                    <span id="btnSpinner" class="spinner-border spinner-border-sm ms-2 d-none"></span>
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Hasil -->
+        <div id="resultSection" class="d-none">
+            <!-- Best Route Info -->
+            <div class="card mb-4 shadow border-0">
+                <div class="card-header bg-warning text-dark fw-bold">
+                    Rute Terbaik
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success">
+                        <h5 class="mb-2">Rute Optimal:</h5>
+                        <p class="mb-2 fs-5" id="bestRoute"></p>
+                        <h5 class="mb-0">Total Jarak: <span id="bestDistance" class="text-primary"></span></h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Convergence Chart -->
+            <div class="card mb-4 shadow border-0">
+                <div class="card-header bg-info text-white fw-bold">
+                    Grafik Konvergensi (Best Distance per Generation)
+                </div>
+                <div class="card-body">
+                    <canvas id="convergenceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Route Visualization -->
+            <div class="card mb-4 shadow border-0">
+                <div class="card-header bg-primary text-white fw-bold">
+                    Visualisasi Rute Terbaik
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Pilih Generasi untuk Visualisasi:</label>
+                        <select id="generationSelect" class="form-select" onchange="updateRouteVisualization()">
+                            <!-- Will be populated by JavaScript -->
+                        </select>
+                    </div>
+                    <div class="text-center">
+                        <canvas id="routeCanvas" width="700" height="500"
+                            style="border: 1px solid #ddd; border-radius: 8px; max-width: 100%;"></canvas>
+                    </div>
+                    <div class="mt-3 text-center">
+                        <p id="currentGenInfo" class="fs-5"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Table -->
+            <div class="card mb-4 shadow border-0">
+                <div class="card-header bg-secondary text-white fw-bold">
+                    Riwayat Per Generasi
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Generasi</th>
+                                    <th>Jarak Terbaik</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="text-center mt-4">
+        <a href="/" class="btn btn-secondary">Kembali ke Home</a>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    let distanceMatrix = [];
+    let cityNames = [];
+    let gaResults = null;
+    let convergenceChart = null;
+
+    // Generate matrix table
+    function generateMatrix() {
+        const numCities = parseInt(document.getElementById('numCities').value);
+        cityNames = [];
+        for (let i = 0; i < numCities; i++) {
+            cityNames.push(String.fromCharCode(65 + i));
+        }
+
+        distanceMatrix = Array(numCities).fill(0).map(() => Array(numCities).fill(0));
+
+        let html = '<thead><tr><th></th>';
+        cityNames.forEach(city => {
+            html += `<th>${city}</th>`;
+        });
+        html += '</tr></thead><tbody>';
+
+        for (let i = 0; i < numCities; i++) {
+            html += `<tr><th>${cityNames[i]}</th>`;
+            for (let j = 0; j < numCities; j++) {
+                if (i === j) {
+                    html += '<td>0</td>';
+                } else {
+                    html += `<td><input type="number" class="form-control form-control-sm" 
+                             id="cell_${i}_${j}" value="0" min="0" style="width: 70px;"></td>`;
+                }
+            }
+            html += '</tr>';
+        }
+        html += '</tbody>';
+
+        document.getElementById('distanceMatrixTable').innerHTML = html;
+    }
+
+    function loadDefaultMatrix() {
+        document.getElementById('numCities').value = 5;
+        generateMatrix();
+
+        const defaultMatrix = [
+            [0, 7, 5, 9, 9],
+            [7, 0, 7, 2, 8],
+            [5, 7, 0, 4, 3],
+            [9, 2, 4, 0, 6],
+            [9, 8, 3, 6, 0]
+        ];
+
+        for (let i = 0; i < 5; i++) {
+            for (let j = 0; j < 5; j++) {
+                if (i !== j) {
+                    document.getElementById(`cell_${i}_${j}`).value = defaultMatrix[i][j];
+                }
+            }
+        }
+    }
+
+    // Read matrix from inputs
+    function readMatrix() {
+        const numCities = cityNames.length;
+        const matrix = [];
+
+        for (let i = 0; i < numCities; i++) {
+            matrix[i] = [];
+            for (let j = 0; j < numCities; j++) {
+                if (i === j) {
+                    matrix[i][j] = 0;
+                } else {
+                    const input = document.getElementById(`cell_${i}_${j}`);
+                    matrix[i][j] = parseFloat(input.value) || 0;
+                }
+            }
+        }
+        return matrix;
+    }
+
+    // Run TSP GA
+    async function runTSP() {
+        document.getElementById('btnText').textContent = 'Processing...';
+        document.getElementById('btnSpinner').classList.remove('d-none');
+        document.getElementById('resultSection').classList.add('d-none');
+
+        const matrix = readMatrix();
+
+        const params = {
+            distance_matrix: matrix,
+            cities: cityNames,
+            pop_size: parseInt(document.getElementById('popSize').value),
+            generations: parseInt(document.getElementById('generations').value),
+            tournament_k: parseInt(document.getElementById('tournamentK').value),
+            crossover_rate: parseFloat(document.getElementById('crossoverRate').value),
+            mutation_rate: parseFloat(document.getElementById('mutationRate').value),
+            elite_size: parseInt(document.getElementById('eliteSize').value)
+        };
+
+        try {
+            const response = await fetch('/run_tsp_genetic_algorithm', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(params)
+            });
+
+            gaResults = await response.json();
+
+            if (gaResults.success) {
+                displayResults();
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        } finally {
+            document.getElementById('btnText').textContent = 'Jalankan TSP GA';
+            document.getElementById('btnSpinner').classList.add('d-none');
+        }
+    }
+
+    function displayResults() {
+        document.getElementById('resultSection').classList.remove('d-none');
+
+        // Best route
+        const routeText = gaResults.best_route.join(' → ') + ' → ' + gaResults.best_route[0];
+        document.getElementById('bestRoute').textContent = routeText;
+        document.getElementById('bestDistance').textContent = gaResults.best_distance;
+
+        // Convergence chart
+        drawConvergenceChart();
+
+        // Populate generation selector
+        const select = document.getElementById('generationSelect');
+        select.innerHTML = '';
+        gaResults.best_routes_per_gen.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.generation;
+            option.textContent = `Generasi ${item.generation} (Jarak: ${item.distance})`;
+            select.appendChild(option);
+        });
+        select.value = gaResults.best_routes_per_gen[gaResults.best_routes_per_gen.length - 1].generation;
+
+        // Draw route
+        updateRouteVisualization();
+
+        // History table
+        displayHistoryTable();
+    }
+
+    function drawConvergenceChart() {
+        const ctx = document.getElementById('convergenceChart').getContext('2d');
+
+        if (convergenceChart) {
+            convergenceChart.destroy();
+        }
+
+        convergenceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: gaResults.history.map(h => h.generation),
+                datasets: [{
+                    label: 'Best Distance',
+                    data: gaResults.history.map(h => h.best_distance),
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.1,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true },
+                    title: {
+                        display: true,
+                        text: 'Konvergensi Algoritma Genetika'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: { display: true, text: 'Jarak Total' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Generasi' }
+                    }
+                }
+            }
+        });
+    }
+
+    function updateRouteVisualization() {
+        const selectedGen = parseInt(document.getElementById('generationSelect').value);
+        const routeData = gaResults.best_routes_per_gen.find(r => r.generation === selectedGen);
+
+        if (!routeData) return;
+
+        const canvas = document.getElementById('routeCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Generate city positions (evenly distributed)
+        const numCities = cityNames.length;
+        const positions = [];
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = Math.min(centerX, centerY) - 60;
+
+        for (let i = 0; i < numCities; i++) {
+            const angle = (i * 2 * Math.PI) / numCities - Math.PI / 2;
+            positions.push({
+                x: centerX + radius * Math.cos(angle),
+                y: centerY + radius * Math.sin(angle)
+            });
+        }
+
+        // Draw route lines
+        ctx.strokeStyle = '#28a745';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+
+        const routeIndices = routeData.route_indices;
+        for (let i = 0; i < routeIndices.length; i++) {
+            const fromIdx = routeIndices[i];
+            const toIdx = routeIndices[(i + 1) % routeIndices.length];
+            const from = positions[fromIdx];
+            const to = positions[toIdx];
+
+            if (i === 0) {
+                ctx.moveTo(from.x, from.y);
+            }
+            ctx.lineTo(to.x, to.y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+
+        // Draw cities
+        cityNames.forEach((city, idx) => {
+            const pos = positions[idx];
+
+            // Circle
+            ctx.fillStyle = '#667eea';
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, 20, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // City name
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(city, pos.x, pos.y);
+        });
+
+        // Update info
+        document.getElementById('currentGenInfo').innerHTML =
+            `<strong>Generasi ${routeData.generation}:</strong> ${routeData.route.join(' → ')} → ${routeData.route[0]}<br>
+            <strong>Total Jarak:</strong> <span class="text-primary">${routeData.distance}</span>`;
+    }
+
+    function displayHistoryTable() {
+        const tbody = document.getElementById('historyTableBody');
+        tbody.innerHTML = '';
+
+        // Show every 10th generation + last
+        const displayHistory = gaResults.history.filter((h, idx) =>
+            idx % 10 === 0 || idx === gaResults.history.length - 1
+        );
+
+        displayHistory.forEach(h => {
+            const row = `<tr>
+                <td>${h.generation}</td>
+                <td>${h.best_distance}</td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+
+    // Initialize on page load
+    window.onload = function () {
+        loadDefaultMatrix();
+    };
+</script>
+{% endblock %}

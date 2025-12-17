@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+
+{% block title %}Tugas 3 - Soft Computing{% endblock %}
+
+{% block content %}
+<section class="content-section mt-5">
+    <div class="container">
+        <div class="card shadow-lg border-0">
+            <div class="card-body tugas-content">
+                <h2 class="text-center mb-4 fw-bold section-title">Tugas 3 - Genetic Algorithm untuk Knapsack Problem</h2>
+                
+                <p>
+                    Tugas ini membahas implementasi Algoritma Genetika (Genetic Algorithm) untuk menyelesaikan 
+                    Knapsack Problem. Knapsack Problem adalah masalah optimasi pencarian terbaik di mana 
+                    kita harus memilih subset item dengan nilai maksimal tanpa melebihi kapasitas tas yang tersedia.
+                </p>
+
+                
+                <h4 class="content-title">1. Pengenalan Genetic Algorithm</h4>
+                <p>
+                    Algoritma Genetika adalah metode pencarian heuristik yang terinspirasi dari proses evolusi 
+                    biologis. GA menggunakan teknik seperti seleksi, crossover (persilangan), dan mutasi untuk 
+                    menghasilkan solusi yang semakin baik dari generasi ke generasi.
+                </p>
+                <p>
+                    Prinsip Dasar GA:
+                </p>
+                <ul>
+                    <li><strong>Populasi:</strong> Kumpulan solusi kandidat (individu/kromosom)</li>
+                    <li><strong>Fitness:</strong> Fungsi evaluasi untuk mengukur kualitas solusi</li>
+                    <li><strong>Seleksi:</strong> Memilih individu terbaik untuk reproduksi</li>
+                    <li><strong>Crossover:</strong> Menggabungkan dua parent untuk menghasilkan offspring</li>
+                    <li><strong>Mutasi:</strong> Mengubah gen secara acak untuk menjaga keragaman</li>
+                    <li><strong>Elitism:</strong> Mempertahankan individu terbaik ke generasi berikutnya</li>
+                </ul>
+
+                <h4 class="content-title">2. Knapsack Problem</h4>
+                <p>
+                    Knapsack Problem (Masalah Ransel) adalah masalah optimasi kombinatorial di mana kita memiliki:
+                </p>
+                <ul>
+                    <li>Sekumpulan item, masing-masing dengan berat dan nilai tertentu</li>
+                    <li>Sebuah tas (knapsack) dengan kapasitas berat maksimal</li>
+                    <li>Tujuan: Memilih kombinasi item dengan nilai maksimal tanpa melebihi kapasitas</li>
+                </ul>
+                <p>
+                    Contoh kasus: Seorang pencuri memiliki tas dengan kapasitas 15 kg. Ada 4 barang dengan 
+                    karakteristik berbeda. Barang mana yang harus diambil untuk memaksimalkan nilai?
+                </p>
+
+                <h4 class="content-title">3. Representasi Kromosom</h4>
+                <p>
+                    Dalam implementasi ini, kromosom direpresentasikan sebagai string biner di mana:
+                </p>
+                <ul>
+                    <li>1 = Item diambil (masuk ke dalam tas)</li>
+                    <li>0 = Item tidak diambil</li>
+                </ul>
+                <p>
+                    Contoh: Kromosom [1, 0, 1, 0] berarti item A dan C dipilih, sedangkan B dan D tidak.
+                </p>
+
+                <h4 class="content-title">4. Fungsi Fitness dengan Penalti</h4>
+                <p>
+                    Fungsi fitness mengevaluasi seberapa baik suatu solusi. Dalam kasus ini:
+                </p>
+                <ul>
+                    <li>Jika total berat ≤ kapasitas: fitness = total nilai</li>
+                    <li>Jika total berat > kapasitas: fitness = 0 (penalti)</li>
+                </ul>
+
+                <h4 class="content-title">5. Operator Genetika</h4>
+                <p><strong>Seleksi Roulette Wheel:</strong></p>
+                <p>
+                    Individu dengan fitness lebih tinggi memiliki probabilitas lebih besar untuk dipilih sebagai parent.
+                </p>
+                <p><strong>Single-Point Crossover:</strong></p>
+                <p>
+                    Pilih titik potong acak, tukar segmen kromosom antara dua parent untuk menghasilkan dua offspring.
+                </p>
+                <p><strong>Bit-Flip Mutation:</strong></p>
+                <p>
+                    Setiap bit dalam kromosom memiliki probabilitas kecil untuk berubah (0→1 atau 1→0).
+                </p>
+
+                <h3>Kalkulator Genetic Algorithm</h3>
+                <p>
+                    Aplikasi ini mensimulasikan algoritma genetika untuk menyelesaikan knapsack problem. 
+                    Anda dapat menyesuaikan parameter GA dan melihat proses evolusi solusi dari generasi ke generasi.
+                </p>
+                
+                <!-- Kalkulator GA -->
+                <div class="card shadow border-0">
+                    <div class="card-header text-center fw-bold">
+                        Genetic Algorithm Knapsack Solver
+                    </div>
+                    <div class="card-body">
+                        <!-- Data Item -->
+                        <div class="mb-4">
+                            <h5 class="content-title">Data Item</h5>
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Berat (kg)</th>
+                                        <th>Nilai ($)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>A</td>
+                                        <td>7</td>
+                                        <td>5</td>
+                                    </tr>
+                                    <tr>
+                                        <td>B</td>
+                                        <td>2</td>
+                                        <td>4</td>
+                                    </tr>
+                                    <tr>
+                                        <td>C</td>
+                                        <td>1</td>
+                                        <td>7</td>
+                                    </tr>
+                                    <tr>
+                                        <td>D</td>
+                                        <td>9</td>
+                                        <td>2</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><strong>Kapasitas Tas: 15 kg</strong></p>
+                        </div>
+
+                        <!-- Parameter GA -->
+                        <div class="mb-4">
+                            <h5 class="content-title">Parameter Algoritma Genetika</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Ukuran Populasi</label>
+                                    <input type="number" class="form-control" id="popSize" value="10" min="4" max="50">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Jumlah Generasi</label>
+                                    <input type="number" class="form-control" id="generations" value="10" min="5" max="100">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Crossover Rate</label>
+                                    <input type="number" class="form-control" id="crossoverRate" value="0.8" min="0" max="1" step="0.1">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Mutation Rate</label>
+                                    <input type="number" class="form-control" id="mutationRate" value="0.1" min="0" max="1" step="0.05">
+                                </div>
+                            </div>
+                            <button class="btn btn-primary w-100" onclick="runGA()">
+                                Jalankan Algoritma Genetika
+                            </button>
+                        </div>
+
+                        <!-- Hasil -->
+                        <div id="results" style="display: none;">
+                            <h5 class="content-title">Proses Evolusi</h5>
+                            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                                <table class="table table-sm table-bordered">
+                                    <thead class="table-light sticky-top">
+                                        <tr>
+                                            <th>Generasi</th>
+                                            <th>Kromosom</th>
+                                            <th>Item</th>
+                                            <th>Berat</th>
+                                            <th>Nilai</th>
+                                            <th>Fitness</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="generationTable">
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="card shadow border-0 mt-4">
+                                <div class="card-body" id="finalResult">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="loading" style="display: none;" class="text-center my-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Menjalankan algoritma genetika...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kesimpulan -->
+                <h3>Kesimpulan</h3>
+                <p>
+                    Algoritma Genetika merupakan metode optimasi yang efektif untuk menyelesaikan masalah 
+                    kombinatorial seperti Knapsack Problem. Melalui proses evolusi yang mensimulasikan 
+                    seleksi alam, GA dapat menemukan solusi yang mendekati optimal tanpa harus memeriksa 
+                    semua kemungkinan kombinasi.
+                </p>
+                <p>
+                    Kelebihan GA: fleksibel, dapat menangani berbagai jenis masalah, tidak memerlukan 
+                    informasi gradien. Kekurangan: tidak menjamin solusi optimal global, waktu komputasi 
+                    bergantung pada parameter yang dipilih.
+                </p>
+
+                <!-- Tombol Kembali -->
+            <div class="text-center mt-4">
+                <a href="/" class="btn btn-secondary">Kembali ke Home</a>
+            </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+async function runGA() {
+    const popSize = parseInt(document.getElementById('popSize').value);
+    const generations = parseInt(document.getElementById('generations').value);
+    const crossoverRate = parseFloat(document.getElementById('crossoverRate').value);
+    const mutationRate = parseFloat(document.getElementById('mutationRate').value);
+
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('results').style.display = 'none';
+
+    try {
+        const response = await fetch('/run_genetic_algorithm', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                pop_size: popSize,
+                generations: generations,
+                crossover_rate: crossoverRate,
+                mutation_rate: mutationRate
+            })
+        });
+
+        const data = await response.json();
+        
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('results').style.display = 'block';
+
+        // Tampilkan tabel generasi
+        const tableBody = document.getElementById('generationTable');
+        tableBody.innerHTML = '';
+        
+        data.history.forEach(gen => {
+            const row = `
+                <tr>
+                    <td>${gen.generation}</td>
+                    <td>[${gen.chromosome.join(', ')}]</td>
+                    <td>${gen.items.length > 0 ? gen.items.join(', ') : '-'}</td>
+                    <td>${gen.weight} kg</td>
+                    <td>$${gen.value}</td>
+                    <td>${gen.fitness}</td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+
+        // Tampilkan hasil akhir
+        const finalResult = document.getElementById('finalResult');
+        finalResult.innerHTML = `
+            <h5 class="content-title mb-3">HASIL AKHIR</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Kromosom Terbaik:</strong> [${data.best_chromosome.join(', ')}]</p>
+                    <p><strong>Item Terpilih:</strong> ${data.best_items.length > 0 ? data.best_items.join(', ') : 'Tidak ada'}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Total Berat:</strong> ${data.total_weight} kg (dari 15 kg)</p>
+                    <p><strong>Total Nilai:</strong> $${data.total_value}</p>
+                    <p><strong>Fitness Akhir:</strong> ${data.final_fitness}</p>
+                </div>
+            </div>
+        `;
+    } catch (error) {
+        document.getElementById('loading').style.display = 'none';
+        alert('Terjadi kesalahan: ' + error.message);
+    }
+}
+</script>
+{% endblock %}

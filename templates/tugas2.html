@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+
+{% block title %}Tugas 2 - Fuzzy Sugeno{% endblock %}
+
+{% block content %}
+<div style="margin-top: 80px;"></div>
+
+<section class="content-section">
+    <div class="container">
+        <div class="tugas-content">
+            <h2 class="text-center mb-4 fw-bold section-title">Tugas 2: Implementasi Fuzzy Sugeno</h2>
+
+            <!-- Penjelasan Paper -->
+            <div class="card mb-5 shadow border-0">
+                <div class="card-header text-center fw-bold">
+                    Tentang Penelitian
+                </div>
+                <div class="card-body">
+                    <h5 class="content-title" style="font-size: 1.1rem;">Judul Paper:</h5>
+                    <p><strong>The Implementation of The Fuzzy Sugeno Algorithm On an IoT-Based Temperature and Humidity
+                            Monitoring System</strong></p>
+
+                    <h5 class="content-title" style="font-size: 1.1rem;">Penulis:</h5>
+                    <p>Ulfah Putri Bisba, M. Ali Ramdhani, Edi Mulyana, Mohamad Irfan (UIN Sunan Gunung Djati Bandung)
+                    </p>
+
+                    <h5 class="content-title" style="font-size: 1.1rem;">Deskripsi:</h5>
+                    <p>
+                        Sistem monitoring suhu dan kelembaban server berbasis IoT menggunakan algoritma Fuzzy Sugeno
+                        untuk menentukan kondisi server.
+                        Sistem dapat memberikan peringatan ketika server mencapai kondisi overheat.
+                    </p>
+
+                    <h5 class="content-title" style="font-size: 1.1rem;">Variabel Input:</h5>
+                    <div class="row justify-content-left text-center mb-4" style="padding: 10px 0;">
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <img src="{{ url_for('static', filename='img/suhu.png') }}" alt="Suhu"
+                                class="rounded-3 shadow-lg img-fluid"
+                                style="max-width: 75%; height: auto; border-radius: 50px;">
+                        </div>
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <img src="{{ url_for('static', filename='img/kelembapan.png') }}" alt="Kelembapan"
+                                class="rounded-3 shadow-lg img-fluid"
+                                style="max-width: 75%; height: auto; border-radius: 50px;">
+                        </div>
+                    </div>
+                    <ul>
+                        <li>Temperature: Cold (&lt;20°C), Normal (20-60°C), Hot (&gt;60°C)</li>
+                        <li>Humidity: Low (&lt;45%), Normal (45-55%), High (&gt;55%)</li>
+                    </ul>
+
+                    <h5 class="content-title" style="font-size: 1.1rem;">Kondisi Output:</h5>
+                    <ul>
+                        <li>Good: Hasil estimasi &lt; 0.33</li>
+                        <li>Normal: Hasil estimasi 0.33 - 0.83</li>
+                        <li>Overheat: Hasil estimasi ≥ 0.83</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Kalkulator Fuzzy Sugeno -->
+            <div class="card mb-5 shadow border-0">
+                <div class="card-header text-center fw-bold">
+                    Kalkulator Fuzzy Sugeno
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Form Input -->
+                        <div class="col-lg-6 mb-4">
+                            <h5 class="content-title" style="font-size: 1.1rem;">Input Data Server</h5>
+                            <form id="fuzzyForm">
+                                <div class="mb-3">
+                                    <label for="temperature" class="form-label fw-bold">Temperature (°C)</label>
+                                    <input type="number" class="form-control" id="temperature" step="0.1" required>
+                                    <small class="form-text text-muted">Masukkan suhu dalam Celsius (contoh: 25, 45,
+                                        70)</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="humidity" class="form-label fw-bold">Humidity (%)</label>
+                                    <input type="number" class="form-control" id="humidity" step="0.1" required>
+                                    <small class="form-text text-muted">Masukkan kelembaban dalam persen (contoh: 40,
+                                        50, 65)</small>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Hitung Fuzzy Sugeno</button>
+                            </form>
+
+                            <!-- Membership Functions -->
+                            <div class="mt-4" id="membershipResult" style="display: none;">
+                                <h5 class="content-title" style="font-size: 1.1rem;">Derajat Keanggotaan</h5>
+
+                                <h6 class="fw-bold mt-3">Temperature:</h6>
+                                <ul id="tempMembership"></ul>
+
+                                <h6 class="fw-bold mt-3">Humidity:</h6>
+                                <ul id="humMembership"></ul>
+                            </div>
+                        </div>
+
+                        <!-- Hasil Kalkulasi -->
+                        <div class="col-lg-6">
+                            <div id="resultCard" style="display: none;">
+                                <h5 class="content-title" style="font-size: 1.1rem;">Hasil Kalkulasi</h5>
+
+                                <div class="alert" id="conditionAlert" role="alert">
+                                    <h5 class="alert-heading" id="conditionTitle"></h5>
+                                    <p class="mb-0">Nilai Defuzzifikasi: <strong id="finalValue"></strong></p>
+                                </div>
+
+                                <h6 class="fw-bold mt-3">Rules yang Aktif:</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Rule</th>
+                                                <th>Kondisi</th>
+                                                <th>α</th>
+                                                <th>z</th>
+                                                <th>α × z</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rulesTable">
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <h6 class="fw-bold mt-3">Defuzzifikasi:</h6>
+                                <div id="defuzzification" class="p-3 bg-light rounded"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel Fuzzy Rules -->
+            <div class="card mb-5 shadow border-0">
+                <div class="card-header text-center fw-bold">
+                    Fuzzy Rules (9 Rules)
+                </div>
+                <div class="card-body">
+                    <p>
+                        Sistem menggunakan 9 aturan fuzzy untuk menentukan kondisi server berdasarkan kombinasi
+                        suhu dan kelembaban. Setiap aturan memiliki bobot dan nilai z yang telah ditentukan.
+                    </p>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Rule</th>
+                                    <th>Temperature</th>
+                                    <th>Humidity</th>
+                                    <th>Weight</th>
+                                    <th>Result (z)</th>
+                                    <th>Condition</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>R1</td>
+                                    <td>Cold (1)</td>
+                                    <td>Low (1)</td>
+                                    <td>2</td>
+                                    <td>0.33</td>
+                                    <td>Good</td>
+                                </tr>
+                                <tr>
+                                    <td>R2</td>
+                                    <td>Cold (1)</td>
+                                    <td>Normal (2)</td>
+                                    <td>3</td>
+                                    <td>0.50</td>
+                                    <td>Normal</td>
+                                </tr>
+                                <tr>
+                                    <td>R3</td>
+                                    <td>Cold (1)</td>
+                                    <td>High (3)</td>
+                                    <td>4</td>
+                                    <td>0.66</td>
+                                    <td>Normal</td>
+                                </tr>
+                                <tr>
+                                    <td>R4</td>
+                                    <td>Normal (2)</td>
+                                    <td>Low (1)</td>
+                                    <td>3</td>
+                                    <td>0.50</td>
+                                    <td>Normal</td>
+                                </tr>
+                                <tr>
+                                    <td>R5</td>
+                                    <td>Normal (2)</td>
+                                    <td>Normal (2)</td>
+                                    <td>4</td>
+                                    <td>0.66</td>
+                                    <td>Normal</td>
+                                </tr>
+                                <tr>
+                                    <td>R6</td>
+                                    <td>Normal (2)</td>
+                                    <td>High (3)</td>
+                                    <td>5</td>
+                                    <td>0.83</td>
+                                    <td>Overheat</td>
+                                </tr>
+                                <tr>
+                                    <td>R7</td>
+                                    <td>Hot (3)</td>
+                                    <td>Low (1)</td>
+                                    <td>4</td>
+                                    <td>0.66</td>
+                                    <td>Normal</td>
+                                </tr>
+                                <tr>
+                                    <td>R8</td>
+                                    <td>Hot (3)</td>
+                                    <td>Normal (2)</td>
+                                    <td>5</td>
+                                    <td>0.83</td>
+                                    <td>Overheat</td>
+                                </tr>
+                                <tr>
+                                    <td>R9</td>
+                                    <td>Hot (3)</td>
+                                    <td>High (3)</td>
+                                    <td>6</td>
+                                    <td>1.00</td>
+                                    <td>Overheat</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h5 class="content-title mt-4" style="font-size: 1.1rem;">Penjelasan Metode:</h5>
+                    <p>
+                        Metode Fuzzy Sugeno menggunakan Weighted Average untuk defuzzifikasi:
+                    </p>
+                    <pre><code>z* = Σ(α<sub>i</sub> × z<sub>i</sub>) / Σα<sub>i</sub></code></pre>
+                    <p>
+                        Di mana:
+                    </p>
+                    <ul>
+                        <li>α<sub>i</sub> = derajat keanggotaan minimum dari rule ke-i</li>
+                        <li>z<sub>i</sub> = nilai output dari rule ke-i</li>
+                        <li>z* = hasil defuzzifikasi (output akhir)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="/" class="btn btn-secondary">Kembali ke Home</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.getElementById('fuzzyForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const temperature = parseFloat(document.getElementById('temperature').value);
+        const humidity = parseFloat(document.getElementById('humidity').value);
+
+        fetch('/calculate_fuzzy', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                temperature: temperature,
+                humidity: humidity
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Tampilkan membership functions
+                document.getElementById('membershipResult').style.display = 'block';
+
+                const tempMembership = document.getElementById('tempMembership');
+                tempMembership.innerHTML = `
+            <li>Cold: ${data.temp_memberships.cold}</li>
+            <li>Normal: ${data.temp_memberships.normal}</li>
+            <li>Hot: ${data.temp_memberships.hot}</li>
+        `;
+
+                const humMembership = document.getElementById('humMembership');
+                humMembership.innerHTML = `
+            <li>Low: ${data.hum_memberships.low}</li>
+            <li>Normal: ${data.hum_memberships.normal}</li>
+            <li>High: ${data.hum_memberships.high}</li>
+        `;
+
+                // Tampilkan hasil
+                document.getElementById('resultCard').style.display = 'block';
+
+                const conditionAlert = document.getElementById('conditionAlert');
+                conditionAlert.className = `alert alert-${data.condition_class}`;
+                document.getElementById('conditionTitle').textContent = `Kondisi Server: ${data.condition}`;
+                document.getElementById('finalValue').textContent = data.final_result;
+
+                // Tampilkan rules yang aktif
+                const rulesTable = document.getElementById('rulesTable');
+                let tableHTML = '';
+                let sumAlphaZ = 0;
+                let sumAlpha = 0;
+
+                data.rule_results.forEach(rule => {
+                    const alphaZ = (rule.alpha * rule.z).toFixed(3);
+                    sumAlphaZ += parseFloat(alphaZ);
+                    sumAlpha += rule.alpha;
+
+                    tableHTML += `
+                <tr>
+                    <td>${rule.rule}</td>
+                    <td>${rule.condition}</td>
+                    <td>${rule.alpha}</td>
+                    <td>${rule.z}</td>
+                    <td>${alphaZ}</td>
+                </tr>
+            `;
+                });
+
+                tableHTML += `
+            <tr class="table-active">
+                <td colspan="3"><strong>Total</strong></td>
+                <td><strong>Σα = ${sumAlpha.toFixed(3)}</strong></td>
+                <td><strong>Σ(α×z) = ${sumAlphaZ.toFixed(3)}</strong></td>
+            </tr>
+        `;
+
+                rulesTable.innerHTML = tableHTML;
+
+                // Tampilkan rumus defuzzifikasi
+                document.getElementById('defuzzification').innerHTML = `
+            <p class="mb-2"><strong>Rumus Weighted Average:</strong></p>
+            <p class="mb-2">z* = Σ(α<sub>i</sub> × z<sub>i</sub>) / Σα<sub>i</sub></p>
+            <p class="mb-2">z* = ${sumAlphaZ.toFixed(3)} / ${sumAlpha.toFixed(3)}</p>
+            <p class="mb-0"><strong>z* = ${data.final_result}</strong></p>
+        `;
+
+                // Scroll ke hasil
+                document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan dalam perhitungan');
+            });
+    });
+</script>
+{% endblock %}
